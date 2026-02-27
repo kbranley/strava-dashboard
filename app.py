@@ -2,6 +2,7 @@
 
 import os
 
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
@@ -139,7 +140,7 @@ if not weekly.empty:
         showlegend=False,
         height=400,
     )
-    st.plotly_chart(fig_weekly, use_container_width=True)
+    st.plotly_chart(fig_weekly, width="stretch")
 
 # --- Two column charts ---
 chart_col1, chart_col2 = st.columns(2)
@@ -164,7 +165,7 @@ with chart_col1:
         )
         fig_pace.update_yaxes(autorange="reversed")  # Lower pace = faster
         fig_pace.update_layout(height=350, showlegend=False)
-        st.plotly_chart(fig_pace, use_container_width=True)
+        st.plotly_chart(fig_pace, width="stretch")
     elif not rides.empty:
         rides_sorted = rides.sort_values("start_date_local")
         fig_speed = px.scatter(
@@ -177,7 +178,7 @@ with chart_col1:
             hover_data=["name", "distance_km"],
         )
         fig_speed.update_layout(height=350, showlegend=False)
-        st.plotly_chart(fig_speed, use_container_width=True)
+        st.plotly_chart(fig_speed, width="stretch")
     else:
         st.info("No run or ride data to show pace/speed trends.")
 
@@ -198,7 +199,7 @@ with chart_col2:
         hole=0.4,
     )
     fig_pie.update_layout(height=350)
-    st.plotly_chart(fig_pie, use_container_width=True)
+    st.plotly_chart(fig_pie, width="stretch")
 
 # --- Monthly summary ---
 st.markdown("---")
@@ -215,7 +216,7 @@ if not monthly.empty:
         color_discrete_sequence=["#FC4C02"],
     )
     fig_monthly.update_layout(height=350, xaxis_title="", showlegend=False)
-    st.plotly_chart(fig_monthly, use_container_width=True)
+    st.plotly_chart(fig_monthly, width="stretch")
 
 # --- Personal bests ---
 st.markdown("---")
@@ -264,4 +265,4 @@ display_df["Elevation (m)"] = display_df["Elevation (m)"].round(0).astype(int)
 display_df["Pace (min/km)"] = display_df["Pace (min/km)"].apply(format_pace)
 display_df["Speed (km/h)"] = display_df["Speed (km/h)"].round(1)
 
-st.dataframe(display_df, use_container_width=True, hide_index=True)
+st.dataframe(display_df, width="stretch", hide_index=True)
