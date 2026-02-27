@@ -1,6 +1,6 @@
-# 🏃‍♂️🚴 Strava Dashboard
+# 🏃‍♂️🚴 Intervals.icu Dashboard
 
-A personal running & cycling dashboard built with Python and Streamlit. Pulls data from the Strava API to visualize your training stats.
+A personal running & cycling dashboard built with Python and Streamlit. Pulls data from the [Intervals.icu](https://intervals.icu) API to visualize your training stats.
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.30+-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)
@@ -13,7 +13,7 @@ A personal running & cycling dashboard built with Python and Streamlit. Pulls da
 - 🏅 **Activity breakdown** by type
 - 📋 **Recent activities** table
 - 🎛️ **Filters** — activity type, date range, km/miles
-- 🎲 **Demo mode** — works with sample data, no Strava account needed
+- 🎲 **Demo mode** — works with sample data, no account needed
 
 ## Quick Start
 
@@ -35,12 +35,12 @@ streamlit run app.py
 
 That's it! The dashboard will open with sample data so you can explore.
 
-### 3. Connect your Strava (optional)
+### 3. Connect Intervals.icu (optional)
 
-1. Go to [Strava API Settings](https://www.strava.com/settings/api)
-2. Create an application (use `http://localhost` for the callback URL)
-3. Copy your Client ID, Client Secret
-4. Get a refresh token by following the [Strava OAuth flow](https://developers.strava.com/docs/getting-started/)
+1. Log in to [Intervals.icu](https://intervals.icu)
+2. Go to **Settings > Developer**
+3. Copy your **API Key**
+4. Note your **Athlete ID** from the URL (e.g. `i12345`)
 5. Create a `.env` file:
 
 ```bash
@@ -54,11 +54,11 @@ cp .env.example .env
 
 ```
 strava-dashboard/
-├── app.py                  # Streamlit dashboard
+├── app.py                    # Streamlit dashboard
 ├── src/
-│   ├── strava_client.py    # Strava API client
-│   ├── data_processing.py  # Data transforms & aggregations
-│   └── sample_data.py      # Demo data generator
+│   ├── intervals_client.py   # Intervals.icu API client
+│   ├── data_processing.py    # Data transforms & aggregations
+│   └── sample_data.py        # Demo data generator
 ├── requirements.txt
 ├── .env.example
 └── .gitignore
@@ -69,7 +69,7 @@ strava-dashboard/
 - **[Streamlit](https://streamlit.io)** — dashboard framework
 - **[Plotly](https://plotly.com)** — interactive charts
 - **[Pandas](https://pandas.pydata.org)** — data processing
-- **[Strava API v3](https://developers.strava.com)** — activity data
+- **[Intervals.icu API](https://intervals.icu/api/v1/docs)** — activity data
 
 ## License
 

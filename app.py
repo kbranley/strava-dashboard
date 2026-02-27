@@ -1,10 +1,13 @@
-"""Strava Dashboard — track your running and cycling stats."""
+"""Intervals.icu Dashboard — track your running and cycling stats."""
 
 import os
 
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from src.data_processing import (
     activities_to_dataframe,
@@ -15,36 +18,35 @@ from src.data_processing import (
     weekly_summary,
 )
 from src.sample_data import generate_sample_activities
-from src.strava_client import StravaClient
+from src.intervals_client import IntervalsClient
 
 # --- Page config ---
 st.set_page_config(
-    page_title="Strava Dashboard",
+    page_title="Intervals.icu Dashboard",
     page_icon="🏃",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-st.title("🏃‍♂️🚴 Strava Dashboard")
+st.title("🏃‍♂️🚴 Intervals.icu Dashboard")
 
 
 # --- Data loading ---
 @st.cache_data(ttl=300)
-def load_strava_data(client_id, client_secret, refresh_token, weeks):
-    """Load activities from Strava API (cached for 5 min)."""
-    client = StravaClient(client_id, client_secret, refresh_token)
+def load_intervals_data(athlete_id, api_key, weeks):
+    """Load activities from Intervals.icu API (cached for 5 min)."""
+    client = IntervalsClient(athlete_id, api_key)
     activities = client.get_recent_activities(weeks=weeks)
     return activities
 
 
 def load_data(weeks: int) -> list[dict]:
-    """Load data from Strava or generate sample data."""
-    client_id = os.getenv("STRAVA_CLIENT_ID")
-    client_secret = os.getenv("STRAVA_CLIENT_SECRET")
-    refresh_token = os.getenv("STRAVA_REFRESH_TOKEN")
+    """Load data from Intervals.icu or generate sample data."""
+    athlete_id = os.getenv("INTERVALS_ATHLETE_ID")
+    api_key = os.getenv("INTERVALS_API_KEY")
 
-    if client_id and client_secret and refresh_token:
-        return load_strava_data(client_id, client_secret, refresh_token, weeks)
+    if athlete_id and api_key:
+        return load_intervals_data(athlete_id, api_key, weeks)
     else:
         return generate_sample_activities(weeks=weeks)
 
@@ -55,14 +57,13 @@ with st.sidebar:
 
     use_demo = not all(
         [
-            os.getenv("STRAVA_CLIENT_ID"),
-            os.getenv("STRAVA_CLIENT_SECRET"),
-            os.getenv("STRAVA_REFRESH_TOKEN"),
+            os.getenv("INTERVALS_ATHLETE_ID"),
+            os.getenv("INTERVALS_API_KEY"),
         ]
     )
 
     if use_demo:
-        st.info("📊 Using sample data. Set Strava env vars to use real data.")
+        st.info("📊 Using sample data. Set Intervals.icu env vars to use real data.")
 
     weeks = st.slider("Weeks of data", min_value=4, max_value=52, value=12)
 

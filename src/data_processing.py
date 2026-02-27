@@ -1,4 +1,7 @@
-"""Process and transform Strava activity data for visualization."""
+"""Process and transform activity data for visualization.
+
+Supports both Intervals.icu and sample data formats.
+"""
 
 from datetime import datetime
 
@@ -6,15 +9,50 @@ import pandas as pd
 
 
 def activities_to_dataframe(activities: list[dict]) -> pd.DataFrame:
-    """Convert raw Strava activities to a clean DataFrame."""
+    """Convert raw activities to a clean DataFrame.
+
+    Handles both Intervals.icu and sample/Strava-style field names.
+    """
     if not activities:
         return pd.DataFrame()
 
     df = pd.DataFrame(activities)
 
+    # Normalize Intervals.icu field names to common format
+    col_map = {
+        "start_date_local": "start_date_local",
+        "moving_time": "moving_time",
+        "elapsed_time": "elapsed_time",
+        "total_elevation_gain": "total_elevation_gain",
+    }
+    # Intervals.icu uses "icu_distance" (meters) or "distance"
+    if "icu_distance" in df.columns and "distance" not in df.columns:
+        df["distance"] = df["icu_distance"]
+    # Intervals.icu uses "icu_moving_time" (seconds)
+    if "icu_moving_time" in df.columns and "moving_time" not in df.columns:
+        df["moving_time"] = df["icu_moving_time"]
+    # Intervals.icu uses "elapsed_time" or "icu_elapsed_time"
+    if "icu_elapsed_time" in df.columns and "elapsed_time" not in df.columns:
+        df["elapsed_time"] = df["icu_elapsed_time"]
+    # Intervals.icu elevation
+    if "icu_total_elevation_gain" in df.columns and "total_elevation_gain" not in df.columns:
+        df["total_elevation_gain"] = df["icu_total_elevation_gain"]
+
+    # Ensure required columns exist with defaults
+    for col in ["distance", "moving_time", "elapsed_time", "total_elevation_gain"]:
+        if col not in df.columns:
+            df[col] = 0
+
     # Parse dates
-    df["start_date"] = pd.to_datetime(df["start_date"])
-    df["start_date_local"] = pd.to_datetime(df["start_date_local"])
+    if "start_date_local" in df.columns:
+        df["start_date_local"] = pd.to_datetime(df["start_date_local"])
+    elif "start_date" in df.columns:
+        df["start_date_local"] = pd.to_datetime(df["start_date"])
+
+    if "start_date" not in df.columns:
+        df["start_date"] = df["start_date_local"]
+    else:
+        df["start_date"] = pd.to_datetime(df["start_date"])
 
     # Convert units
     df["distance_km"] = df["distance"] / 1000
