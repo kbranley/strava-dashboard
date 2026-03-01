@@ -222,7 +222,7 @@ if not monthly.empty:
 st.markdown("---")
 st.subheader("🏆 Personal Bests")
 
-pbs = get_personal_bests(df)
+pbs = get_personal_bests(df, activity_type)
 if pbs:
     pb_cols = st.columns(len(pbs))
     for i, (key, pb) in enumerate(pbs.items()):
